@@ -21,8 +21,10 @@ class AppConfig:
 
 def load_config() -> AppConfig:
     vault_path = Path(os.environ.get("VAULT_PATH", "/Users/aeshef/Documents/Obsidian Vault")).resolve()
-    templates_path = vault_path / "800_Автоматизация" / "Templates" / "Clones"
-    agent_config_path = vault_path / "800_Автоматизация" / "Agent" / "config"
+    templates_path_env = os.environ.get("TEMPLATES_PATH")
+    templates_path = Path(templates_path_env).resolve() if templates_path_env else (vault_path / "800_Автоматизация" / "Templates" / "Clones")
+    agent_config_path_env = os.environ.get("AGENT_CONFIG_PATH")
+    agent_config_path = Path(agent_config_path_env).resolve() if agent_config_path_env else (vault_path / "800_Автоматизация" / "Agent" / "config")
     export_root = vault_path / "700_База_Данных" / "Export"
     attachments_root = vault_path / "700_База_Данных" / "_Вложения"
     telegram_bot_token = os.environ.get("TELEGRAM_BOT_TOKEN")
