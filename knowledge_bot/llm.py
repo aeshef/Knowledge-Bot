@@ -40,10 +40,15 @@ class LLMClient:
                 "response_format": {"type": "json_object"},
                 "temperature": 0.1,
             }
-            log.debug("LLM system: %s", system_prompt)
-            log.debug("LLM request: %s", payload)
+            # Safe request logging
+            log.info("LLM request: url=%s model=%s base=%s", url, model, self.base_url)
+            log.debug("LLM headers: %s", {"Authorization": "Bearer ***", "Content-Type": headers.get("Content-Type")})
+            log.debug("LLM payload keys: %s", list(payload.keys()))
             resp = requests.post(url, headers=headers, data=json.dumps(payload), timeout=60)
-            resp.raise_for_status()
+            if not resp.ok:
+                body_preview = (resp.text or "")[:500]
+                log.error("LLM HTTP %s: %s", resp.status_code, body_preview)
+                resp.raise_for_status()
             data = resp.json()
             text = data["choices"][0]["message"]["content"]
             result = json.loads(text)
